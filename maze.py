@@ -1,5 +1,5 @@
-from entities import *
 from position import Position
+from entities import Entity, Hero
 import random
 import os
 

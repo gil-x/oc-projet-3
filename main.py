@@ -1,6 +1,4 @@
 from maze import Maze
-from entities import *
-from position import *
 
 class Main:
     def __init__(self, maze_arg):
