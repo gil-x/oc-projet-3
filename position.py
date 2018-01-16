@@ -3,7 +3,8 @@ class Position:
         self.x = x
         self.y = y
 
-    @property
+    # -tc- je ne vois pas de raison d'utiliser le décorateur @property ici.
+    # -tc- Ce sont de simples méthodes
     def up(self):
         return Position(self.x, self.y - 1)
 

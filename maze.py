@@ -1,5 +1,7 @@
+# -tc- Eviter les imports de la forme: from module import *
 from entities import *
 from position import *
+# -tc- Placer les imports de la bibliothèque standard en premier.
 import os
 
 class Maze:
@@ -19,6 +21,7 @@ class Maze:
         for y, line in enumerate(maze_arg):
             self.structure.append( \
             [Entity.factory(self.MAZE_TRADUCTOR[str(item)], x, y) \
+from position import *
             for x, item in enumerate(line)] \
             )
 
