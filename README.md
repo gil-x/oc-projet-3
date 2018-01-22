@@ -33,3 +33,19 @@ Done in this version:
 
 Need to:
 - use a new class Hero, not child of Entity, which manage the collected items and which instance should be initialized with the correct Maze instance (big problem to solve!).
+
+
+0.5 - Console version works but need some improvements / imports fixed / added unused new standalone Hero class
+
+Done in this version:
+- Maze tell when the game ends to main ;
+- mains sections of the game are now in displayed by separate functions in Main (easier to create other main display modules) ;
+- better console presentation ;
+- now maze is loaded from a json file ;
+- begun main_2D.py, will work with pygame.
+
+Need to:
+- use a new class Hero, not child of Entity, which manage the collected items and which instance should be initialized with the correct Maze instance (big problem to solve!) ;
+- write a module to create mazes as json, or convert txt/csv to json ;
+- explore and choose which maze to play ;
+- a big loop to replay/change maze ;

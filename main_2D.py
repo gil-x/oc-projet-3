@@ -1,17 +1,34 @@
 from maze import Maze
 import json, os
+import pygame
+from pygame.locals import *
+
+# pygame.init()
 
 class Main:
     def __init__(self, maze_arg):
         self.maze = Maze(maze_arg)
+
+        pygame.init()
+
+        self.window = pygame.display.set_mode((35 * self.maze.width, 35 * self.maze.height), RESIZABLE)
+        self.path = pygame.image.load("assets/path.png").convert()
+        self.wall = pygame.image.load("assets/wall.png").convert()
+        self.hero = pygame.image.load("assets/down.png").convert()
+
+
 
     def run(self):
         end = False
 
         self.display_title_screen()
 
+
         # Main loop:
         while not self.maze.end:
+            pygame.time.Clock().tick(30)
+            self.display_2d_maze()
+            pygame.display.flip()
 
             self.maze.console_display()
             self.display_status()
@@ -97,30 +114,19 @@ Sorry, you've be caught...
 """)
         input("\n\n\nPress <ENTER> to quit.")
 
+    def display_2d_maze(self):
+        for y,line in enumerate(self.maze.structure):
+            for x,case in enumerate(line):
+                print(case)
+                if type(case).__name__ == "Path":
+                    self.window.blit(self.path, (x*35,y*35))
+                else:
+                    self.window.blit(self.wall, (x*35,y*35))
+                # self.window.blit(self.hero, (150,150))
+
 
 with open('mazes/maze1.json', 'r') as f:
     maze_test = json.load(f)
-
-# maze_test = [
-# [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-# [1,0,1,0,0,0,1,0,0,1,0,0,0,0,3],
-# [1,0,0,0,0,0,0,0,0,1,1,1,1,0,1],
-# [1,0,1,0,1,0,0,0,0,1,0,0,1,0,1],
-# [1,0,1,1,1,1,1,1,0,0,0,0,0,0,1],
-# [1,0,0,0,0,0,1,0,0,0,0,1,1,1,1],
-# [1,0,0,1,1,0,1,1,0,0,0,1,0,0,1],
-# [1,0,0,0,1,0,0,1,1,1,1,1,1,0,1],
-# [1,0,0,1,1,1,1,1,0,0,1,0,0,0,1],
-# [1,0,0,0,0,0,0,0,0,1,1,1,1,0,1],
-# [1,1,1,1,1,1,1,1,0,0,0,0,0,0,1],
-# [1,0,0,0,1,0,0,0,0,0,1,1,1,1,1],
-# [1,0,0,1,1,1,0,1,0,0,0,0,0,0,1],
-# [1,0,0,0,0,0,0,0,0,1,1,1,1,0,1],
-# [1,4,1,1,1,1,1,1,1,1,1,1,1,1,1],
-# ]
-
-# with open('mazes/maze1.json', 'w') as f:
-#     f.write(json.dumps(maze_test, indent=4))
 
 main = Main(maze_test)
 main.run()

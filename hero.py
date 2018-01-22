@@ -2,7 +2,7 @@
 # Future class to replace old hero, and avoid variable class to get hero position.
 # Main problem is to give the Maze argument whithin a factory BEFORE this one is ready.
 
-class Hero:
+class Heroplus:
 
     def __init__(self, maze, position, look="down"):
         self.maze = Maze
@@ -11,6 +11,10 @@ class Hero:
         self.needle = 0
         self.barrel = 0
         self.sedative = 0
+
+    @staticmethod
+    def factory(object_type, x, y):
+        return Heroplus(Position(x, y))
 
     def move_up(self, maze):
         if maze.entity_move(self.position,self.position.up()):
