@@ -11,7 +11,7 @@ class Main:
         self.display_title_screen()
 
         # Main loop:
-        while not self.maze.end:
+        while not self.maze.end: # tester si un des deux end est True / pour faire un quit & save par exemple.
 
             self.maze.console_display()
             self.display_status()
