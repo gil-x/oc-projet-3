@@ -28,26 +28,6 @@ class Maze:
 
         self.hero = self.get_the_hero()
 
-        # First step: place randomly 3 items in the maze.
-        # faire une boucle (ou pas !) pour tester s'il y a bien un 0 dans la ligne.
-        # sinon après un premier parcours de structure, on retient les positions dispo et on tire au sort parmi elles.
-
-        # random_lines = random.sample(range(1, len(maze_arg)-1), 3)
-        # random_colums = []
-        # for i in random_lines:
-        #     random_colums.append(random.choice([j for j,case in enumerate(maze_arg[i]) if case == 0]))
-        # for i,x in enumerate(random_lines):
-        #     maze_arg[x][random_colums[i]] = "2"
-
-        # Second step: Build the maze by replacing 0,1,2,3,4 by the correct object, using the Entity Factory:
-
-        # self.structure = []
-        # for y, line in enumerate(maze_arg):
-        #     self.structure.append( \
-        #     [Entity.factory(MAZE_TRADUCTOR[str(item)], x, y) \
-        #     for x, item in enumerate(line)] \
-        #     )
-
     def place_items(self, maze_arg):
         random_lines = random.sample(range(1, len(maze_arg)-1), self.nb_items)
         random_colums = []
@@ -72,6 +52,11 @@ class Maze:
                 if isinstance(entity, Hero):
                     return entity
 
+    def get_square(self,position):
+        return self.structure[position.y][position.x]
+
+    def set_square(self,position,entity):
+        self.structure[position.y][position.x] = entity
 
     def console_display(self):
         # Dictionnary to get the correct display from Hero.look:
@@ -113,29 +98,31 @@ class Maze:
 
 
     def entity_move(self, position, goal):
-        """Entities call this method when intend to move into a direction. Problem is to give the maze argument."""
+        """
+        Entities call this method when intend to move into a direction. Problem is to give the maze argument.
+        Args: position, goal = Postion instances.
+        """
         if goal.x >= 0 and goal.x < self.width and goal.y >= 0 and goal.y < self.height :
-            if self.structure[goal.y][goal.x].crossable:
+            if self.get_square(goal).crossable:
                 print("I can go.")
-                print("Goal square is: ", type(self.structure[goal.y][goal.x]).__name__)
+                print("Goal get_square is: ", type(self.get_square(goal)).__name__)
 
                 # If case being crossed is the guardian (exit), pragram check if hero has collected all 3 items.
-                if type(self.structure[goal.y][goal.x]).__name__ == "Guardian": # ON PEUT FAIRE MIEUX AVEC isinstance et Guardian sans ""
+
+                # if type(self.get_square(goal.look_around())).__name__ == "Guardian": # ON PEUT FAIRE MIEUX AVEC isinstance et Guardian sans ""
+                if "Guardian" in [type(self.get_square(position)).__name__ for position in goal.look_around()]: # ON PEUT FAIRE MIEUX AVEC isinstance et Guardian sans ""
                     self.end = True
-                    # if self.hero.items >= self.nb_items:
-                    #     print("CONGRATULATIONS! You escaped!")
-                    # else:
-                    #     print("Sorry, you've be caught...")
 
                 # If case to be crossed is an item, the item become a new path.
                 if type(self.structure[goal.y][goal.x]).__name__ == "Item":
                     self.structure[goal.y][goal.x] = Entity.factory("Path", goal.x, goal.y)
-                    # self.items_collected += 1
                     self.hero.pick_item()
 
-                self.structure[position.y][position.x], self.structure[goal.y][goal.x] = self.structure[goal.y][goal.x], self.structure[position.y][position.x]
+                self.set_square(goal, self.get_square(position))
+                self.set_square(position, Entity.factory("Path", goal.x, goal.y))
                 return True
             else:
                 print("This is a wall, I guess...")
+                pass
         else:
             print("End of the maze!")

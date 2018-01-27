@@ -32,6 +32,7 @@ class Wall(Entity):
         self.crossable = False
 
 class Item(Entity):
+    NAMES = ["needle", "barrel", "sedative"]
     def __init__(self, position, name="item"):
         super().__init__(position)
         self.type = name
@@ -40,39 +41,6 @@ class Guardian(Entity):
     def __init__(self, position):
         super().__init__(position)
 
-class Hero_old(Entity):
-
-    #Class variable to get a reference to the unique instance of Hero.
-    hero_list = []
-
-    def __init__(self, position, look="down"):
-        # Entity.__init__(self, position)
-        super().__init__(position)
-        self.look = look
-        # register_instance(self)
-        self.hero_list.append(self)
-
-    # @classmethod
-    # def register_instance(cls, hero):
-    #     cls.hero_list.append(hero)
-
-    def move_up(self, maze):
-        self.look = "up"
-        if maze.entity_move(self.position,self.position.up()):
-            self.position = self.position.up()
-    def move_down(self, maze):
-        self.look = "down"
-        if maze.entity_move(self.position,self.position.down()):
-            self.position = self.position.down()
-    def move_left(self, maze):
-        self.look = "left"
-        if maze.entity_move(self.position,self.position.left()):
-            self.position = self.position.left()
-    def move_right(self, maze):
-        self.look = "right"
-        if maze.entity_move(self.position,self.position.right()):
-            self.position = self.position.right()
-
 
 class Hero(Entity):
 
@@ -80,9 +48,9 @@ class Hero(Entity):
         super().__init__(position)
         self.maze = maze
         self.look = look
-        # self.needle = 0
-        # self.barrel = 0
-        # self.sedative = 0
+        self.needle = 0
+        self.barrel = 0
+        self.sedative = 0
         self.items = 0
 
     # def set_maze(self, maze):

@@ -14,3 +14,6 @@ class Position:
 
     def right(self):
         return Position(self.x + 1, self.y)
+
+    def look_around(self):
+        return [Position(self.x, self.y - 1), Position(self.x, self.y + 1), Position(self.x - 1, self.y), Position(self.x + 1, self.y)]
