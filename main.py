@@ -45,8 +45,8 @@ class Main:
 
 
     def clear_console(self):
-        clear = lambda: os.system('cls') # Windows System
-        # clear = lambda: os.system('clear') # Linux System
+        # clear = lambda: os.system('cls') # Windows System
+        clear = lambda: os.system('clear') # Linux System
         clear()
 
 
@@ -71,10 +71,12 @@ Welcome to...
         print("""
 ====================
 | Items found: {items}/{nb_items} |
+| Distance: {distance}
 ====================
         """.format(
         items= self.maze.hero.items,
         nb_items= self.maze.nb_items,
+        distance= self.maze.hero.distance,
         ))
 
 

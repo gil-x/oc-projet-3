@@ -16,10 +16,15 @@ class Main:
         self.win_music = pygame.mixer.Sound("assets/sounds/in_love.ogg")
         self.loss_music = pygame.mixer.Sound("assets/sounds/sad_game_over.ogg")
 
-        self.window = pygame.display.set_mode((35 * self.maze.width, 35 * self.maze.height), RESIZABLE)
+        self.tile_width = 35
+        self.tile_height = 35
+
+        self.window = pygame.display.set_mode((self.tile_width * self.maze.width, self.tile_height * self.maze.height), RESIZABLE)
         self.welcome = pygame.image.load("assets/welcome.png").convert()
         self.win = pygame.image.load("assets/win.png").convert()
         self.loss = pygame.image.load("assets/loss.png").convert()
+
+
 
         self.path = pygame.image.load("assets/path.png").convert()
         self.wall = pygame.image.load("assets/wall.png").convert()
@@ -31,6 +36,12 @@ class Main:
         self.hero_down = pygame.image.load("assets/down.png").convert_alpha()
         self.hero_left = pygame.image.load("assets/left.png").convert_alpha()
         self.hero_right = pygame.image.load("assets/right.png").convert_alpha()
+        self.hero_look = {
+            "up": self.hero_up,
+            "down": self.hero_down,
+            "left": self.hero_left,
+            "right": self.hero_right,
+        }
         self.light = pygame.image.load("assets/light_cache.png").convert_alpha()
 
 
@@ -43,10 +54,12 @@ class Main:
         self.graphic_title_loop()
 
         # Main loop:
-        self.graphic_game_loop()
+        if not self.maze.quit:
+            self.graphic_game_loop()
 
         # Ending screen
-        self.graphic_end_loop()
+        if not self.maze.quit:
+            self.graphic_end_loop()
 
 
     def graphic_title_loop(self):
@@ -62,16 +75,25 @@ class Main:
                         self.title_music.stop()
                         end = True
                 elif event.type == QUIT:
-                    end = True #IL FAUDRAIT POUVOIR QUITTER TOTALEMENT LE JEU ICI
+                    self.maze.quit()
+                    end = True
+
+                    # end = True #IL FAUDRAIT POUVOIR QUITTER TOTALEMENT LE JEU ICI
 
 
     def graphic_game_loop(self):
-        end = False
-        while not self.maze.end or end: # or not end // Problème : ne finit pas le jeu ! Trouver autre chose.
-            self.display_2d_maze()
-            self.game_music.play()
+        # end = False
+        self.display_2d_maze()
+        self.game_music.play()
+        while not self.maze.end :
+        # while not self.maze.end or end: # or not end // Problème : ne finit pas le jeu ! Trouver autre chose.
+
             init_items = self.maze.hero.items
+            hero_actual_position = self.maze.hero.position
+
             for event in pygame.event.get(): # PENSER à mettre elif et pas if dans ces cas.
+                if event.type == QUIT:
+                    self.maze.quit()
                 if event.type == KEYDOWN:
                     if event.key == K_UP:
                         self.maze.hero.move_up(self.maze)
@@ -81,8 +103,8 @@ class Main:
                         self.maze.hero.move_left(self.maze)
                     elif event.key == K_RIGHT:
                         self.maze.hero.move_right(self.maze)
-                    elif event.type == QUIT:
-                        end = True
+                self.refresh_2d_maze(hero_actual_position)
+
                 if init_items != self.maze.hero.items:
                     self.item_sound.play()
 
@@ -118,8 +140,8 @@ class Main:
     def display_2d_maze(self):
         for y_position,line in enumerate(self.maze.structure):
             for x_position,case in enumerate(line):
-                x = x_position * 35
-                y = y_position * 35
+                x = x_position * self.tile_width
+                y = y_position * self.tile_height
                 # CHANGER ! Et 35 devrait être dans un fichier config, dans une constante
                 # D'une manière générale éviter les constantes 'magiques' = entiers glissés dans le code
                 if type(case).__name__ == "Wall":
@@ -132,23 +154,33 @@ class Main:
                     self.window.blit(self.guardian, (x,y))
                 elif type(case).__name__ == "Hero":
                     self.window.blit(self.path, (x,y))
-                    if self.maze.hero.look == "down":
-                        self.window.blit(self.hero_down, (x,y))
-                    if self.maze.hero.look == "up":
-                        self.window.blit(self.hero_up, (x,y))
-                    if self.maze.hero.look == "left":
-                        self.window.blit(self.hero_left, (x,y))
-                    if self.maze.hero.look == "right":
-                        self.window.blit(self.hero_right, (x,y))
+                    self.hero_look["down"]
+                    # if self.maze.hero.look == "down":
+                    #     self.window.blit(self.hero_down, (x,y))
+                    # if self.maze.hero.look == "up":
+                    #     self.window.blit(self.hero_up, (x,y))
+                    # if self.maze.hero.look == "left":
+                    #     self.window.blit(self.hero_left, (x,y))
+                    # if self.maze.hero.look == "right":
+                    #     self.window.blit(self.hero_right, (x,y))
                     # self.window.blit(self.light, (x - 105,y - 105)) Ma logique n'est pas bonne... Peut être en jouant sur l'alpha des éléments (mais ça oblige à pratiquement à parcourir structure, ou créer une foction qui révise les valeurs d'alpha autour de la position : pouquoi pas...)
                 else:
                     self.window.blit(self.path, (x,y))
                 # self.window.blit(self.hero, (150,150))
         pygame.display.flip()
 
-    def refresh_2d_maze(self):
-        """Function to refreh the hero position: replace old image by a path, blit him at new position."""
-        pass
+    def refresh_2d_maze(self,hero_actual_position):
+        """
+        Function to refreh the hero position:
+        1. replace the hero by a path
+        2. get hero position and draw the sprite
+        """
+        if self.maze.hero.distance == 1:
+            self.window.blit(self.wall, (hero_actual_position.x * self.tile_width,hero_actual_position.y * self.tile_height))
+        else:
+            self.window.blit(self.path, (hero_actual_position.x * self.tile_width,hero_actual_position.y * self.tile_height))
+        self.window.blit(self.hero_look[self.maze.hero.look], (self.maze.hero.position.x * self.tile_width,self.maze.hero.position.y * self.tile_height))
+        pygame.display.flip()
 
 
 

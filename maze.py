@@ -19,14 +19,20 @@ class Maze:
         Second step: build the maze.
         """
         self.end = False
+        self.quit = False
         self.config = maze_arg
         self.width = len(maze_arg[0])
         self.height = len(maze_arg)
+        self.console_w = 4
+        self.console_h = 2
         self.nb_items = nb_items
 
         self.place_items(maze_arg)
 
         self.hero = self.get_the_hero()
+
+    def quit(self):
+        self.quit = True
 
     def place_items(self, maze_arg):
         random_lines = random.sample(range(1, len(maze_arg)-1), self.nb_items)
@@ -66,6 +72,11 @@ class Maze:
             "left": "◄",
             "right": "►",
         }
+        trad_item_display = {
+            "needle": "1",
+            "barrel": "2",
+            "sedative": "3",
+        }
         # Dictionnary to get the correct display from Hero.look:
         trad_class_to_display = {
             "Path": "░",
@@ -90,11 +101,10 @@ class Maze:
 
             # Iterate and display multiple times x,y to be more readable in console. '* 6' can be changed or removed:
             for x,case in enumerate(line):
-                line_to_display += trad_class_to_display[type(case).__name__] * 6
-            print(line_to_display)
-            print(line_to_display)
-            print(line_to_display)
-            print(line_to_display)
+                line_to_display += trad_class_to_display[type(case).__name__] * self.console_w
+            for i in range(self.console_h):
+                print(line_to_display)
+
 
 
     def entity_move(self, position, goal):
@@ -106,6 +116,7 @@ class Maze:
             if self.get_square(goal).crossable:
                 print("I can go.")
                 print("Goal get_square is: ", type(self.get_square(goal)).__name__)
+                self.hero.add_distance()
 
                 # If case being crossed is the guardian (exit), pragram check if hero has collected all 3 items.
 
@@ -114,12 +125,15 @@ class Maze:
                     self.end = True
 
                 # If case to be crossed is an item, the item become a new path.
-                if type(self.structure[goal.y][goal.x]).__name__ == "Item":
+                elif type(self.structure[goal.y][goal.x]).__name__ == "Item":
                     self.structure[goal.y][goal.x] = Entity.factory("Path", goal.x, goal.y)
                     self.hero.pick_item()
 
                 self.set_square(goal, self.get_square(position))
-                self.set_square(position, Entity.factory("Path", goal.x, goal.y))
+                if self.hero.distance == 1:
+                    self.set_square(position, Entity.factory("Wall", goal.x, goal.y))
+                else:
+                    self.set_square(position, Entity.factory("Path", goal.x, goal.y))
                 return True
             else:
                 print("This is a wall, I guess...")

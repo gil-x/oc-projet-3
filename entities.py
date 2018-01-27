@@ -35,11 +35,12 @@ class Item(Entity):
     NAMES = ["needle", "barrel", "sedative"]
     def __init__(self, position, name="item"):
         super().__init__(position)
-        self.type = name
+        self.type = self.NAMES.pop()
 
 class Guardian(Entity):
-    def __init__(self, position):
+    def __init__(self, position, vigilant=True):
         super().__init__(position)
+        self.vigilant = vigilant
 
 
 class Hero(Entity):
@@ -52,12 +53,14 @@ class Hero(Entity):
         self.barrel = 0
         self.sedative = 0
         self.items = 0
+        self.distance = 0
 
-    # def set_maze(self, maze):
-    #     self.maze = maze
 
     def pick_item(self):
         self.items += 1
+
+    def add_distance(self):
+        self.distance += 1
 
     def move_up(self, maze):
         self.look = "up"
