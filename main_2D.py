@@ -24,31 +24,54 @@ class Main:
         self.win = pygame.image.load("assets/win.png").convert()
         self.loss = pygame.image.load("assets/loss.png").convert()
 
-
-
         self.path = pygame.image.load("assets/path.png").convert()
         self.wall = pygame.image.load("assets/wall.png").convert()
         self.item = pygame.image.load("assets/item.png").convert_alpha()
         self.guardian = pygame.image.load("assets/guardian.png").convert_alpha()
-        self.guardian.set_alpha(0.5)
-        self.hero = pygame.image.load("assets/down.png").convert_alpha()
-        self.hero_up = pygame.image.load("assets/top.png").convert_alpha()
-        self.hero_down = pygame.image.load("assets/down.png").convert_alpha()
-        self.hero_left = pygame.image.load("assets/left.png").convert_alpha()
-        self.hero_right = pygame.image.load("assets/right.png").convert_alpha()
-        self.hero_look = {
-            "up": self.hero_up,
-            "down": self.hero_down,
-            "left": self.hero_left,
-            "right": self.hero_right,
+
+        self.hero = {
+            "up": pygame.image.load("assets/top.png").convert_alpha(),
+            "down": pygame.image.load("assets/down.png").convert_alpha(),
+            "left": pygame.image.load("assets/left.png").convert_alpha(),
+            "right": pygame.image.load("assets/right.png").convert_alpha(),
         }
-        self.light = pygame.image.load("assets/light_cache.png").convert_alpha()
+        # self.light = pygame.image.load("assets/light_cache.png").convert_alpha()
 
+    def display_2d_maze(self):
+        for y_position,line in enumerate(self.maze.structure):
+            for x_position,case in enumerate(line):
+                x = x_position * self.tile_width
+                y = y_position * self.tile_height
+                if type(case).__name__ == "Wall":
+                    self.window.blit(self.wall, (x,y))
+                elif type(case).__name__ == "Item":
+                    self.window.blit(self.path, (x,y))
+                    self.window.blit(self.item, (x,y))
+                elif type(case).__name__ == "Guardian":
+                    self.window.blit(self.path, (x,y))
+                    self.window.blit(self.guardian, (x,y))
+                elif type(case).__name__ == "Hero":
+                    self.window.blit(self.path, (x,y))
+                    self.hero["down"]
+                else:
+                    self.window.blit(self.path, (x,y))
+        # pygame.display.flip()
 
-
+    def refresh_2d_maze(self,hero_actual_position):
+        """
+        Function to refreh the hero position:
+        1. replace the hero by a path
+        2. get hero position and draw the sprite
+        """
+        if self.maze.hero.distance == 1:
+            self.window.blit(self.wall, (hero_actual_position.x * self.tile_width,hero_actual_position.y * self.tile_height))
+        else:
+            self.window.blit(self.path, (hero_actual_position.x * self.tile_width,hero_actual_position.y * self.tile_height))
+        self.window.blit(self.hero[self.maze.hero.look], (self.maze.hero.position.x * self.tile_width,self.maze.hero.position.y * self.tile_height))
+        pygame.display.flip()
 
     def run(self):
-        end = False
+        # end = False
 
         # Title screen
         self.graphic_title_loop()
@@ -85,14 +108,18 @@ class Main:
         # end = False
         self.display_2d_maze()
         self.game_music.play()
+        heros_initial_position = self.maze.hero.position
+        print('heros_initial_position=',heros_initial_position.x,' ', heros_initial_position.y)
+
         while not self.maze.end :
         # while not self.maze.end or end: # or not end // Problème : ne finit pas le jeu ! Trouver autre chose.
 
             init_items = self.maze.hero.items
             hero_actual_position = self.maze.hero.position
 
-            for event in pygame.event.get(): # PENSER à mettre elif et pas if dans ces cas.
+            for event in pygame.event.get():
                 if event.type == QUIT:
+                    print("Quit")
                     self.maze.quit()
                 if event.type == KEYDOWN:
                     if event.key == K_UP:
@@ -126,61 +153,7 @@ class Main:
                     end = True
 
 
-    def display_status(self):
-        print("""
-====================
-| Items found: {items}/{nb_items} |
-====================
-        """.format(
-        items= self.maze.hero.items,
-        nb_items= self.maze.nb_items,
-        ))
 
-
-    def display_2d_maze(self):
-        for y_position,line in enumerate(self.maze.structure):
-            for x_position,case in enumerate(line):
-                x = x_position * self.tile_width
-                y = y_position * self.tile_height
-                # CHANGER ! Et 35 devrait être dans un fichier config, dans une constante
-                # D'une manière générale éviter les constantes 'magiques' = entiers glissés dans le code
-                if type(case).__name__ == "Wall":
-                    self.window.blit(self.wall, (x,y))
-                elif type(case).__name__ == "Item":
-                    self.window.blit(self.path, (x,y))
-                    self.window.blit(self.item, (x,y))
-                elif type(case).__name__ == "Guardian":
-                    self.window.blit(self.path, (x,y))
-                    self.window.blit(self.guardian, (x,y))
-                elif type(case).__name__ == "Hero":
-                    self.window.blit(self.path, (x,y))
-                    self.hero_look["down"]
-                    # if self.maze.hero.look == "down":
-                    #     self.window.blit(self.hero_down, (x,y))
-                    # if self.maze.hero.look == "up":
-                    #     self.window.blit(self.hero_up, (x,y))
-                    # if self.maze.hero.look == "left":
-                    #     self.window.blit(self.hero_left, (x,y))
-                    # if self.maze.hero.look == "right":
-                    #     self.window.blit(self.hero_right, (x,y))
-                    # self.window.blit(self.light, (x - 105,y - 105)) Ma logique n'est pas bonne... Peut être en jouant sur l'alpha des éléments (mais ça oblige à pratiquement à parcourir structure, ou créer une foction qui révise les valeurs d'alpha autour de la position : pouquoi pas...)
-                else:
-                    self.window.blit(self.path, (x,y))
-                # self.window.blit(self.hero, (150,150))
-        pygame.display.flip()
-
-    def refresh_2d_maze(self,hero_actual_position):
-        """
-        Function to refreh the hero position:
-        1. replace the hero by a path
-        2. get hero position and draw the sprite
-        """
-        if self.maze.hero.distance == 1:
-            self.window.blit(self.wall, (hero_actual_position.x * self.tile_width,hero_actual_position.y * self.tile_height))
-        else:
-            self.window.blit(self.path, (hero_actual_position.x * self.tile_width,hero_actual_position.y * self.tile_height))
-        self.window.blit(self.hero_look[self.maze.hero.look], (self.maze.hero.position.x * self.tile_width,self.maze.hero.position.y * self.tile_height))
-        pygame.display.flip()
 
 
 
