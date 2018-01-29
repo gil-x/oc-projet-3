@@ -1,9 +1,8 @@
 from maze import Maze
-import json, os
+import json, os, glob, random
 import pygame
 from pygame.locals import *
 
-# pygame.init()
 
 class Main:
     def __init__(self, maze_arg):
@@ -27,15 +26,20 @@ class Main:
         self.path = pygame.image.load("assets/path.png").convert()
         self.wall = pygame.image.load("assets/wall.png").convert()
         self.item = pygame.image.load("assets/item.png").convert_alpha()
+        self.item2 = [
+            pygame.image.load("assets/item_b.png").convert_alpha(),
+            pygame.image.load("assets/item_s.png").convert_alpha(),
+            pygame.image.load("assets/item_n.png").convert_alpha(),
+            ]
         self.guardian = pygame.image.load("assets/guardian.png").convert_alpha()
 
         self.hero = {
-            "up": pygame.image.load("assets/top.png").convert_alpha(),
+            "up": pygame.image.load("assets/up.png").convert_alpha(),
             "down": pygame.image.load("assets/down.png").convert_alpha(),
             "left": pygame.image.load("assets/left.png").convert_alpha(),
             "right": pygame.image.load("assets/right.png").convert_alpha(),
         }
-        # self.light = pygame.image.load("assets/light_cache.png").convert_alpha()
+
 
     def display_2d_maze(self):
         for y_position,line in enumerate(self.maze.structure):
@@ -46,7 +50,8 @@ class Main:
                     self.window.blit(self.wall, (x,y))
                 elif type(case).__name__ == "Item":
                     self.window.blit(self.path, (x,y))
-                    self.window.blit(self.item, (x,y))
+                    # self.window.blit(self.item, (x,y))
+                    self.window.blit(self.item2.pop(), (x,y))
                 elif type(case).__name__ == "Guardian":
                     self.window.blit(self.path, (x,y))
                     self.window.blit(self.guardian, (x,y))
@@ -55,7 +60,7 @@ class Main:
                     self.hero["down"]
                 else:
                     self.window.blit(self.path, (x,y))
-        # pygame.display.flip()
+
 
     def refresh_2d_maze(self,hero_actual_position):
         """
@@ -98,20 +103,20 @@ class Main:
                         self.title_music.stop()
                         end = True
                 elif event.type == QUIT:
-                    self.maze.quit()
+                    self.maze.exit()
                     end = True
 
                     # end = True #IL FAUDRAIT POUVOIR QUITTER TOTALEMENT LE JEU ICI
 
 
     def graphic_game_loop(self):
-        # end = False
+        end = False
         self.display_2d_maze()
         self.game_music.play()
         heros_initial_position = self.maze.hero.position
         print('heros_initial_position=',heros_initial_position.x,' ', heros_initial_position.y)
 
-        while not self.maze.end :
+        while not self.maze.end and not end:
         # while not self.maze.end or end: # or not end // Problème : ne finit pas le jeu ! Trouver autre chose.
 
             init_items = self.maze.hero.items
@@ -119,8 +124,8 @@ class Main:
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    print("Quit")
-                    self.maze.quit()
+                    self.maze.exit()
+                    end = True
                 if event.type == KEYDOWN:
                     if event.key == K_UP:
                         self.maze.hero.move_up(self.maze)
@@ -134,7 +139,6 @@ class Main:
 
                 if init_items != self.maze.hero.items:
                     self.item_sound.play()
-
 
 
     def graphic_end_loop(self):
@@ -155,10 +159,21 @@ class Main:
 
 
 
+def load_mazes():
+    maze_files = []
+    choice = -1
+    for maze_file in glob.glob("./mazes/*.json"):
+        maze_files.append(maze_file)
+
+    if len(maze_files) > 1:
+        f = random.choice(maze_files).replace("\\", "/").replace("./", "")
+    else:
+        f = 'mazes/default.json'
+
+    with open(f, 'r') as f:
+         maze_arg = json.load(f)
+    return maze_arg
 
 
-with open('mazes/maze1.json', 'r') as f:
-    maze_test = json.load(f)
-
-main = Main(maze_test)
+main = Main(load_mazes())
 main.run()

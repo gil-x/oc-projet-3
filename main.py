@@ -1,5 +1,5 @@
 from maze import Maze
-import json, os
+import json, os, glob
 
 class Main:
     def __init__(self, maze_arg):
@@ -45,8 +45,8 @@ class Main:
 
 
     def clear_console(self):
-        # clear = lambda: os.system('cls') # Windows System
-        clear = lambda: os.system('clear') # Linux System
+        clear = lambda: os.system('cls') # Windows System
+        # clear = lambda: os.system('clear') # Linux System
         clear()
 
 
@@ -100,29 +100,26 @@ Sorry, you've be caught...
         input("\n\n\nPress <ENTER> to quit.")
 
 
-with open('mazes/maze1.json', 'r') as f:
-    maze_test = json.load(f)
+def load_mazes():
+    maze_files = []
+    choice = -1
+    for maze_file in glob.glob("./mazes/*.json"):
+        maze_files.append(maze_file)
+    maze_files_presentation = ""
+    for i,maze_file in enumerate(maze_files):
+        maze_files_presentation += "{i} = {name}\n".format(
+            i = str(i),
+            name= maze_file.replace("./mazes\\", ""),
+        )
+    print(maze_files_presentation)
+    while choice not in range(0,len(maze_files)):
+        choice = int(input("Wich one?\n"))
+    f = glob.glob("./mazes/*.json")[choice].replace("\\", "/").replace("./", "")
+    with open(f, 'r') as f:
+         maze_arg = json.load(f)
+    return maze_arg
 
-# maze_test = [
-# [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-# [1,0,1,0,0,0,1,0,0,1,0,0,0,0,3],
-# [1,0,0,0,0,0,0,0,0,1,1,1,1,0,1],
-# [1,0,1,0,1,0,0,0,0,1,0,0,1,0,1],
-# [1,0,1,1,1,1,1,1,0,0,0,0,0,0,1],
-# [1,0,0,0,0,0,1,0,0,0,0,1,1,1,1],
-# [1,0,0,1,1,0,1,1,0,0,0,1,0,0,1],
-# [1,0,0,0,1,0,0,1,1,1,1,1,1,0,1],
-# [1,0,0,1,1,1,1,1,0,0,1,0,0,0,1],
-# [1,0,0,0,0,0,0,0,0,1,1,1,1,0,1],
-# [1,1,1,1,1,1,1,1,0,0,0,0,0,0,1],
-# [1,0,0,0,1,0,0,0,0,0,1,1,1,1,1],
-# [1,0,0,1,1,1,0,1,0,0,0,0,0,0,1],
-# [1,0,0,0,0,0,0,0,0,1,1,1,1,0,1],
-# [1,4,1,1,1,1,1,1,1,1,1,1,1,1,1],
-# ]
+maze_arg = load_mazes()
 
-# with open('mazes/maze1.json', 'w') as f:
-#     f.write(json.dumps(maze_test, indent=4))
-
-main = Main(maze_test)
+main = Main(maze_arg)
 main.run()

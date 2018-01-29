@@ -12,13 +12,13 @@ class Entity:
     def factory(object_type, x, y):
         if object_type == "Path":
             return Path(Position(x, y))
-        if object_type == "Wall":
+        elif object_type == "Wall":
             return Wall(Position(x, y))
-        if object_type == "Item":
+        elif object_type == "Item":
             return Item(Position(x, y))
-        if object_type == "Guardian":
+        elif object_type == "Guardian":
             return Guardian(Position(x, y))
-        if object_type == "Hero":
+        elif object_type == "Hero":
             return Hero(Position(x, y))
 
 
