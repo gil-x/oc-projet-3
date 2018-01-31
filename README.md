@@ -1,51 +1,46 @@
-Openclassrooms | parcours développeur d'applications Python
-
---
-Projet 3 : "Aidez MacGyver à s'échapper !"
---
-
-Contexte du jeu :
-
-McGyver Prozac Crazy Escape. McGyver a été interné, il peut s'enfuir s'il trouve de quoi endormir le garde qui surveille la sortie de l'hôpital.
+Little maze game created with Python for a student course for
+"Openclassrooms | parcours développeur d'applications Python",
+project 3 "Projet 3 : "Aidez MacGyver à s'échapper !"":
 
 
-VERSIONS
---
-
-0.1 - It's working but code is not pythonic.
-
-0.4 - Console version works but need some improvements
-
-Done in this version:
-- class Main added in main.py ;
-- random set up for items ;
-- position.[direction] properties are now methods ;
-- Maze displays following direction asked ; more doc.
-
-Need to:
-- use a new class Hero, not child of Entity, which manage the collected items and which instance should be initialized with the correct Maze instance (big problem to solve!).
+===========================
+McGyver Prozac Crazy Escape
+===========================
 
 
-0.41 - Console version works but need some improvements / imports fixed / added unused new standalone Hero class
-
-Done in this version:
-- imports fixed and pythonics (I hope...)
-
-Need to:
-- use a new class Hero, not child of Entity, which manage the collected items and which instance should be initialized with the correct Maze instance (big problem to solve!).
+*** Story:
+McGyver was caught trying to make a nuclear bomb with some corn flakes and wire.
+Locked up in a psychiatric hospital, he has an escape plan: find enough medical
+stuff to make the guardian asleep and get out of.
 
 
-0.5 - Console version works but need some improvements / imports fixed / added unused new standalone Hero class
+*** Play the game:
+Look at requirement.txt and install the modules indicated.
+You can run the game either in console or graphic window:
+- console: run main.py
+- graphic: run main_2D.py
 
-Done in this version:
-- Maze tell when the game ends to main ;
-- mains sections of the game are now in displayed by separate functions in Main (easier to create other main display modules) ;
-- better console presentation ;
-- now maze is loaded from a json file ;
-- begun main_2D.py, will work with pygame.
 
-Need to:
-- use a new class Hero, not child of Entity, which manage the collected items and which instance should be initialized with the correct Maze instance (big problem to solve!) ;
-- write a module to create mazes as json, or convert txt/csv to json ;
-- explore and choose which maze to play ;
-- a big loop to replay/change maze ;
+*** Win the game:
+Three items are randomly put in the maze, you have to collect all before reach
+the guardian and end the game.
+
+
+*** Create levels:
+You can create levels by using editor.py: just run it!
+Follow instructions written in the bottom on the screen.
+But BE AWARE of two thin:
+- dont make tiles not crossables or put the hero or guardian in backends;
+- very important: keep in mind that when the hero step aside the guardian, game
+ends, so do NOT create tiles crossables after bypass the guardian: it should be
+impossible to get some items and win the game;
+- you press ENTER to register the created maze in "mazes" folder as "custom.json",
+you can rename it and create anothers mazes as you want;
+- in console game you choose the maze from all in "mazes" folder;
+- in graphic game, the maze is randomly picked in the "mazes" folder;
+
+
+*** Custom graphics and sounds:
+You can do that : look in config.py and best practice create and change the
+ASSETS_PATH to "my_assets" or what you want. Next you should use the same names
+for each musics, sounds and graphics. Beware to use same formats: ogg & png.

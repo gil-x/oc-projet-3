@@ -7,12 +7,10 @@ class Main:
 
     def run(self):
         end = False
-
         self.display_title_screen()
 
         # Main loop:
-        while not self.maze.end: # tester si un des deux end est True / pour faire un quit & save par exemple.
-
+        while not self.maze.end:
             self.maze.console_display()
             self.display_status()
 
@@ -45,10 +43,10 @@ class Main:
 
 
     def clear_console(self):
+        # Uncomment the lines accordind to your system:
         clear = lambda: os.system('cls') # Windows System
         # clear = lambda: os.system('clear') # Linux System
         clear()
-
 
     def display_title_screen(self):
         print("""
@@ -66,7 +64,6 @@ Welcome to...
         input("\nPress <ENTER> to start game!")
         self.clear_console()
 
-
     def display_status(self):
         print("""
 ====================
@@ -79,7 +76,6 @@ Welcome to...
         distance= self.maze.hero.distance,
         ))
 
-
     def display_victory_screen(self):
         print("""
 *************************************
@@ -89,7 +85,6 @@ Welcome to...
 *************************************
 """)
         input("\n\n\nPress <ENTER> to quit.")
-
 
     def display_loss_screen(self):
         print("""
@@ -108,15 +103,15 @@ def load_mazes():
     maze_files_presentation = ""
     for i,maze_file in enumerate(maze_files):
         maze_files_presentation += "{i} = {name}\n".format(
-            i = str(i),
-            name= maze_file.replace("./mazes\\", ""),
+            i=str(i),
+            name=maze_file.replace("./mazes\\", ""),
         )
     print(maze_files_presentation)
-    while choice not in range(0,len(maze_files)):
+    while choice not in range(0, len(maze_files)):
         choice = int(input("Wich one?\n"))
     f = glob.glob("./mazes/*.json")[choice].replace("\\", "/").replace("./", "")
     with open(f, 'r') as f:
-         maze_arg = json.load(f)
+        maze_arg = json.load(f)
     return maze_arg
 
 maze_arg = load_mazes()
