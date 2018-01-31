@@ -3,9 +3,7 @@ Little maze game created with Python for a student course for
 project 3 "Projet 3 : "Aidez MacGyver à s'échapper !"":
 
 
-===========================
-McGyver Prozac Crazy Escape
-===========================
+MCGYVER PROZAC CRAZY ESCAPE
 
 
 *** Story:
