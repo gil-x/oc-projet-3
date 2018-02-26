@@ -34,8 +34,10 @@ class Wall(Entity):
 
 
 class Item(Entity):
+    names = ["needle", "barrel", "sedative"]
     def __init__(self, position):
         super().__init__(position)
+        self.name = Item.names.pop()
 
 
 class Guardian(Entity):
@@ -52,10 +54,30 @@ class Hero(Entity):
         self.barrel = 0
         self.sedative = 0
         self.items = 0
+        # self.items_code = (0, 0, 0)
+
         self.distance = 0
 
     def pick_item(self):
         self.items += 1
+
+    def items_code(self):
+        return (self.barrel, self.needle, self.sedative)
+
+    def pick_named_item(self, item_name):
+        self.items += 1
+        if item_name == "needle":
+            self.needle += 1
+        elif item_name == "barrel":
+            self.barrel += 1
+        elif item_name == "sedative":
+            self.sedative += 1
+
+    def display_items(self):
+        print("items=", self.items)
+        print("needle=", self.needle)
+        print("barrel=", self.barrel)
+        print("sedative=", self.sedative)
 
     def add_distance(self):
         self.distance += 1

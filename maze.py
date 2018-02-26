@@ -101,9 +101,11 @@ class Maze:
 
                 # If case to be crossed is an item, the item become a new path.
                 if type(self.structure[goal.y][goal.x]).__name__ == "Item":
+                    # self.hero.pick_item()
+                    self.hero.pick_named_item(self.structure[goal.y][goal.x].name)
+                    self.hero.display_items()
                     self.structure[goal.y][goal.x] = Entity.factory("Path",
                             goal.x, goal.y)
-                    self.hero.pick_item()
 
                 if "Guardian" in [type(self.get_square(position)).__name__
                         for position in goal.look_around()]:

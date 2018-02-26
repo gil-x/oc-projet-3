@@ -31,6 +31,8 @@ HERO_DOWN = ASSETS_PATH + "down.png"
 HERO_LEFT = ASSETS_PATH + "left.png"
 HERO_RIGHT = ASSETS_PATH + "right.png"
 
+ITEM_UI = ASSETS_PATH + "ui_items_strip.png"
+
 
 # EDITOR
 

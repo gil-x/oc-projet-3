@@ -27,19 +27,33 @@ class Main:
 
         self.path = pygame.image.load(PATH).convert()
         self.wall = pygame.image.load(WALL).convert()
-        self.item = [
-            pygame.image.load(ITEM_B).convert_alpha(),
-            pygame.image.load(ITEM_S).convert_alpha(),
-            pygame.image.load(ITEM_N).convert_alpha(),
-            ]
+        self.item = {
+            "barrel": pygame.image.load(ITEM_B).convert_alpha(),
+            "needle": pygame.image.load(ITEM_N).convert_alpha(),
+            "sedative": pygame.image.load(ITEM_S).convert_alpha()
+        }
         self.guardian = pygame.image.load(GUARDIAN).convert_alpha()
-
         self.hero = {
             "up": pygame.image.load(HERO_UP).convert_alpha(),
             "down": pygame.image.load(HERO_DOWN).convert_alpha(),
             "left": pygame.image.load(HERO_LEFT).convert_alpha(),
             "right": pygame.image.load(HERO_RIGHT).convert_alpha(),
         }
+        self.item_ui = [pygame.image.load(ITEM_UI).convert_alpha()]
+        self.item_decode = {
+            (0, 0, 0): (TILE_W * 0, 0, TILE_W, TILE_H),
+            (1, 0, 0): (TILE_W * 1, 0, TILE_W, TILE_H),
+            (0, 1, 0): (TILE_W * 2, 0, TILE_W, TILE_H),
+            (0, 0, 1): (TILE_W * 3, 0, TILE_W, TILE_H),
+            (1, 1, 0): (TILE_W * 4, 0, TILE_W, TILE_H),
+            (1, 0, 1): (TILE_W * 5, 0, TILE_W, TILE_H),
+            (0, 1, 1): (TILE_W * 6, 0, TILE_W, TILE_H),
+            (1, 1, 1): (TILE_W * 7, 0, TILE_W, TILE_H),
+        }
+        self.item_ui_pos = (
+            (self.maze.width - 1) * TILE_W,
+            (self.maze.height - 1) * TILE_H
+        )
         self.first_move = True
 
     def display_2d_maze(self):
@@ -51,7 +65,7 @@ class Main:
                     self.window.blit(self.wall, (x, y))
                 elif type(case).__name__ == "Item":
                     self.window.blit(self.path, (x, y))
-                    self.window.blit(self.item.pop(), (x, y))
+                    self.window.blit(self.item[case.name], (x, y))
                 elif type(case).__name__ == "Guardian":
                     self.window.blit(self.path, (x, y))
                     self.window.blit(self.guardian, (x, y))
@@ -60,16 +74,18 @@ class Main:
                     self.hero["down"]
                 else:
                     self.window.blit(self.path, (x, y))
+        self.window.blit(
+            self.item_ui[0],
+            self.item_ui_pos,
+            self.item_decode[self.maze.hero.items_code()]
+            )
 
     def run(self):
-
         # Title screen
         self.graphic_title_loop()
-
         # Main loop:
         if not self.maze.quit:
             self.graphic_game_loop()
-
         # Ending screen
         if not self.maze.quit:
             self.graphic_end_loop()
@@ -109,6 +125,12 @@ class Main:
         self.window.blit(self.hero[self.maze.hero.look],
                 (self.maze.hero.position.x * TILE_W,
                 self.maze.hero.position.y * TILE_H))
+
+        self.window.blit(
+            self.item_ui[0],
+            self.item_ui_pos,
+            self.item_decode[self.maze.hero.items_code()]
+            )
         pygame.display.flip()
 
     def graphic_game_loop(self):
